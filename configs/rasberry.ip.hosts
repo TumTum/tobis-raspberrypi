@@ -1,0 +1,5 @@
+[TobisRasberry]
+192.168.2.113   ansible_user=pi ansible_ssh_pass=raspberry
+
+[macOs]
+localhost       ansible_connection=local

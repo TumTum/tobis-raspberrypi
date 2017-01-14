@@ -1,0 +1,57 @@
+---
+- stat:
+    path: "{{ raspian_dev_disk }}"
+  register: sdcard
+
+- fail:
+    msg: "{{ raspian_dev_disk }} is not a Device"
+  when: sdcard.stat.exists == false or sdcard.stat.isblk == false
+
+- name: "Unmount SDCARD"
+  shell: 'diskutil umountDisk {{ raspian_dev_disk }}'
+
+- name: Install Raspbian
+  shell: "dd bs=1m if={{ raspian_image }} of={{ raspian_dev_disk }}"
+  args:
+    chdir: "{{role_path}}/files"
+  become: true
+  register: rasbian_installed
+
+- stat: path=/Volume/boot
+  register: rasbianMountPoint
+
+- fail:
+    msg: "Raspbian is not mounted, what is going wrong with the Image"
+  when: rasbianMountPoint.stat.isdir == false or rasbian_installed|failed
+
+- name: Enable SSH
+  file: path=/Volume/boot/ssh state=touch
+
+- name: "Unmount SDCARD"
+  shell: 'diskutil umountDisk {{ raspian_dev_disk }}'
+
+- name: "Remount Raspbian exe4 Filesystem in write modus"
+  shell: "fuse-ext2 -o force {{ raspian_dev_disk }}s2 /Volumes/Pi"
+  become: true
+
+- stat:
+     path: /Volumes/Pi
+  become: true
+  register: raspbian_fk
+
+- fail:
+    msg: "Raspbian Filesystem is not writeble"
+  when: raspbian_fk.stat.isdir == false or raspbian_fk.stat.woth == false
+
+- name: "Enable Wifi for {{ raspian_wifi.ssid }}"
+  blockinfile:
+    dest: /Volumes/Pi/etc/wpa_supplicant/wpa_supplicant.conf
+    block: |
+      network={
+          ssid="{{ raspian_wifi.ssid }}"
+          psk="{{ raspian_wifi.pass }}"
+      }
+  become: true
+
+- name: "Eject SDCARD -- finishd"
+  shell: 'diskutil eject {{ raspian_dev_disk }}'

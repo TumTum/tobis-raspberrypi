@@ -1,0 +1,3 @@
+---
+- include: software-update.yml
+- include: user-config.yml

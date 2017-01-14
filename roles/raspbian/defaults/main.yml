@@ -1,0 +1,7 @@
+raspian_dev_disk: "/dev/disk"
+
+raspian_image: "2017-01-11-raspbian-jessie-lite.img" 
+
+raspian_wifi:
+    ssid: 'AirMat'
+    pass: 'www.iphn.de'

@@ -1,0 +1,7 @@
+---
+- name: Rasberry Tobi Like Configure
+  hosts: TobisRasberry
+  roles:
+    - plainStandards
+    - sunfounder
+    
