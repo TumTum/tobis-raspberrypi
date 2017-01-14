@@ -17,15 +17,15 @@
   become: true
   register: rasbian_installed
 
-- stat: path=/Volume/boot
+- stat: path=/Volumes/boot
   register: rasbianMountPoint
 
 - fail:
     msg: "Raspbian is not mounted, what is going wrong with the Image"
-  when: rasbianMountPoint.stat.isdir == false or rasbian_installed|failed
+  when: rasbianMountPoint.stat.isdir == false
 
 - name: Enable SSH
-  file: path=/Volume/boot/ssh state=touch
+  file: path=/Volumes/boot/ssh state=touch
 
 - name: "Unmount SDCARD"
   shell: 'diskutil umountDisk {{ raspian_dev_disk }}'
@@ -41,7 +41,7 @@
 
 - fail:
     msg: "Raspbian Filesystem is not writeble"
-  when: raspbian_fk.stat.isdir == false or raspbian_fk.stat.woth == false
+  when: raspbian_fk.stat.isdir == false or raspbian_fk.stat.writeable == false
 
 - name: "Enable Wifi for {{ raspian_wifi.ssid }}"
   blockinfile:
