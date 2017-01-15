@@ -1,3 +1,5 @@
 ---
 - include: software-update.yml
+  become: true
 - include: user-config.yml
+  become: true

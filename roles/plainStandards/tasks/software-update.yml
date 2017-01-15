@@ -1,4 +1,7 @@
 ---
-- name: Update Raspian
+- name: "My Lovley Apps"
   apt:
+    name: "{{ item }}"
     update_cache: yes
+  with_items:
+    - "vim"

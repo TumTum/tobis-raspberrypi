@@ -1,11 +1,24 @@
 ---
-# - name: Change Standard Passwort
-#   user:
-#     name: pi
-#     password: "{{ 'quark'|password_hash('sha512') }}"
-
 - name: Save my SSH key
   authorized_key:
     user: pi
     key: "https://github.com/tumtum.keys"
     state: present
+
+- stat:
+    path: /home/pi/.ssh/authorized_keys 
+  register: savekey
+
+- name: Change Standard Passwort
+  user:
+    name: pi
+    password: "{{ 'quark'|password_hash('sha512') }}"
+  when: savekey.stat.exists == true
+
+- name: Bash Alias aktivieren
+  template:
+    src: bash_alias.sh
+    dest: ~/.bash_aliases
+    owner: pi
+    mode: 0644
+  become: no
