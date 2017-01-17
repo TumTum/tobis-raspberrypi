@@ -1,5 +1,6 @@
 ---
-- name: Install sunfounder source code
-  copy:
-    src: "sunfounder-source"
+- name: Updload sunfounder source code
+  unarchive:
+    src: "sunfounder-source.tar.gz"
     dest: "/home/pi/"
+  become: no
