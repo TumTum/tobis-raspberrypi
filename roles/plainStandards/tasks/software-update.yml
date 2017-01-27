@@ -5,3 +5,14 @@
     update_cache: yes
   with_items:
     - "vim"
+    - "git"
+
+- name: "Download wiringPi"
+  git:
+    repo: git://git.drogon.net/wiringPi
+    dest: /home/pi/wiringPi
+
+- name: "Install wiringPi"
+  shell: "./build"
+  args:
+    chdir: "/home/pi/wiringPi"
